@@ -1,9 +1,25 @@
-﻿using Xunit;
+using Xunit;
 
 namespace MatrixMultiplication
 {
+    /// <summary>
+    /// This class demonstrates a simple implementation of A * b where A is an m*n matrix and b is an n*1 vector.
+    /// </summary>
     public static class MatrixMultiplication
     {
+
+        /// <summary>
+        /// Calculates the matrix product of <param A and b.
+        /// </summary>
+        /// <param name="a">
+        /// The m*n matrix.
+        /// </param>
+        /// <param name="b">
+        /// The n*1 vector.
+        /// </param>
+        /// <returns>
+        /// The matrix product defined as A * b.
+        /// </returns>
         public static double[] MatrixProduct(double[][] a, double[] b)
         {
             double[] result = new double[a.Length];
@@ -23,6 +39,9 @@ namespace MatrixMultiplication
             return result;
         }
 
+        /// <summary>
+        /// A unit test of MatrixProduct using the arrange-act-assert style.
+        /// </summary>
         public static void Test()
         {
             // Arrange
