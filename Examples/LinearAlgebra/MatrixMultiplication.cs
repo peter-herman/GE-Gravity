@@ -7,7 +7,6 @@ namespace MatrixMultiplication
     /// </summary>
     public static class MatrixMultiplication
     {
-
         /// <summary>
         /// Calculates the matrix product of <param A and b.
         /// </summary>
