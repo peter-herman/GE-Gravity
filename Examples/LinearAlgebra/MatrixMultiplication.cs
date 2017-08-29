@@ -21,6 +21,8 @@ namespace MatrixMultiplication
         /// </returns>
         public static double[] MatrixProduct(double[][] a, double[] b)
         {
+            // Guard clauses ommitted for brevity.
+            
             double[] result = new double[a.Length];
 
             for (int i = 0; i < a.Length; i++)
