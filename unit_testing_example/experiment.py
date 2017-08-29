@@ -4,12 +4,12 @@ __project__ = "unit_testing_example"
 
 class Experiment(object):
     """
-    Represents an experiment that is constructed with a specific parameterization and evaluated for given inputs.
+    Represents an experiment that is constructed with a specific parametrization and evaluated for given inputs.
     """
 
     def __init__(self, a, b):
         """
-        Constructs an experiment with a specific parameterization.
+        Constructs an experiment with a specific parametrization.
         :param a: The alpha parameter.
         :param b: The beta parameter.
         """
