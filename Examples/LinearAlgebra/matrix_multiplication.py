@@ -1,6 +1,14 @@
 # namespace: matrix_multiplication
 
+
 def matrix_multiplication(a, b):
+    """
+     Calculates the matrix product of A and b.
+    :param a: The m*n matrix.
+    :param b: The n*1 vector.
+    :return: The matrix product defined as A * b.
+    """
+    
     result = [None] * len(a)
 
     for i in range(len(a)):
@@ -15,6 +23,10 @@ def matrix_multiplication(a, b):
 
 
 def test():
+    """
+    A unit test of MatrixProduct using the arrange-act-assert style.
+    """
+
     # Arrange
     a = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
 

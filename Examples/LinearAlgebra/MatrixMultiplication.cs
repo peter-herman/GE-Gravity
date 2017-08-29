@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 
 namespace MatrixMultiplication
 {
@@ -8,7 +8,7 @@ namespace MatrixMultiplication
     public static class MatrixMultiplication
     {
         /// <summary>
-        /// Calculates the matrix product of <param A and b.
+        /// Calculates the matrix product of A and b.
         /// </summary>
         /// <param name="a">
         /// The m*n matrix.
@@ -21,8 +21,6 @@ namespace MatrixMultiplication
         /// </returns>
         public static double[] MatrixProduct(double[][] a, double[] b)
         {
-            // Null reference checks ommitted for simplicity.
-            
             double[] result = new double[a.Length];
 
             for (int i = 0; i < a.Length; i++)
@@ -40,6 +38,7 @@ namespace MatrixMultiplication
             return result;
         }
 
+        
         /// <summary>
         /// A unit test of MatrixProduct using the arrange-act-assert style.
         /// </summary>
@@ -63,7 +62,7 @@ namespace MatrixMultiplication
             double[] result = MatrixProduct(a, b);
 
             // Assert
-            Assert.Equals(expected, result);
+            Assert.Equal(expected, result);
         }
     }
 }
