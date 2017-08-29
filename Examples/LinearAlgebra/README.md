@@ -4,7 +4,6 @@ This directory contains examples that map between symbolic linear algebra and co
 
 # Matrix Multiplication
 
- - Given an __m*n__ matrix **A** and an __n*1__ vector **b**, the following examples compute **A * x**
-
- - MatrixMultiplication.cs.html
- - matrix_multiplication.py.html
+- Given an _m*n_ matrix __A__ and an _n*1_ vector __b__, the following examples compute __A * x__:
+    - [MatrixMultiplication.cs](MatrixMultiplication.cs.html)
+    - [matrix_multiplication.py](matrix_multiplication.py.html)
