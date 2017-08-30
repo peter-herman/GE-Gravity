@@ -98,7 +98,7 @@ Austin Drenski
   - _This definition is overly broad, but sufficient for this section. We'll revisit this definition in another presentation._
 - Assume that there is a class named `Example` and _instances_ of the class are objects of _type_ `Example`.
 ---
-# Programming with Data: Classes in C#
+# Programming with Data: Classes in CSharp
 ```c#
 /// <summary>
 /// Represents an example.
@@ -135,7 +135,7 @@ public class Example
 - That's all objects are in context: boxes that hold values. 
 - The difference between objects and arrays--both of which can hold integers--is that the object gives us more __context__ about the stored value. 
 ---
-# Programming with Data: Classes in F#
+# Programming with Data: Classes in FSharp
 ```f#
 /// <summary>
 /// Represents an example.
