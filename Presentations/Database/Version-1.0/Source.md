@@ -25,7 +25,9 @@ _This presentation does not represent in any way the views of the U.S. Internati
   - Update frequency
   - Time-invariant variables for time-variant data
   - Variable definition inconsistencies
+  
 ???
+
 - Prior to the 2017 update, the dataset was last updated in 2006.
 - For many variables that have obvious variance over time--such as population-weighted distance--the CEPII variables remain constant.
 - For other variables, definitions are inconsistently applied.
@@ -37,7 +39,9 @@ _This presentation does not represent in any way the views of the U.S. Internati
   3. Geography
   4. Politics
   5. Population
+  
 ???
+
 - The database has many variables, but can be described in terms of four categories: culture, geography, politics, and population.
 - Culture variables describe data such as a common language or a common colonizer.
 - Economy variables describe data such as a common currency or a similar market system.
@@ -66,7 +70,9 @@ _This presentation does not represent in any way the views of the U.S. Internati
   - Review
   - Suggestion
   - Submission
+  
 ???
+
 - Moving forward, materials related to development and maintenance will be made public.
 - Our hope is to model this as a collaborative, open-source project in which many others will join our efforts to maintain, improve, and extend the database.
 - We welcome user feedback, suggestions, and data submissions:
