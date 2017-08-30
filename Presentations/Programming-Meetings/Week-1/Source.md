@@ -198,4 +198,3 @@ class Example:
 - All three languages support lambda functions – more on this later.
 - The class Example has an instance method named HasNonZeroValue. 
 - Every Example object has its own instance of HasNonZeroValue.
----
