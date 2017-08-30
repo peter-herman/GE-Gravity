@@ -7,6 +7,7 @@ Abbyad, Drenski, Gurevich, Herman, Horowitz, Kenneally, Shikher, and Ubee
 6 September 2017
 
 _This presentation does not represent in any way the views of the U.S. International Trade Commission or any of its individual Commissioners._
+
 ---
 # Agenda
 
@@ -71,7 +72,6 @@ _This presentation does not represent in any way the views of the U.S. Internati
 - We welcome user feedback, suggestions, and data submissions:
   - This will improve overall quality by allowing for user-scrutiny of the entire data pipeline.
   - If a user does not agree with our methodology, they can offer their own improvements.
--
 ---
 class: center, middle
 
