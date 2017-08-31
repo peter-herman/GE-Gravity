@@ -4,13 +4,11 @@ import json
 
 __all__ = ["JsonExpressionTree"]
 __author__ = "Austin Drenski"
-__project__ = "GE-Gravity"
 __created__ = "8-31-2017"
 __altered__ = "8-31-2017"
 __version__ = "1.0.0"
 
 
-# noinspection PyPep8Naming
 class JsonExpressionTree(object):
     """
     Represents an abstract syntax tree serialized into JSON.
@@ -62,7 +60,7 @@ class JsonExpressionTree(object):
         if func is None:
             raise TypeError
 
-        self._source = inspect.getsource(func)
+        self._source = inspect.getsource(func).strip()
         self._tree = self.visit(ast.parse(self._source))
         self._json = json.dumps(self._tree, separators=(",", ":"))
         self._json_formatted = json.dumps(self._tree, indent=2)

@@ -3,7 +3,7 @@ from unittest import TestCase
 from JsonExpressionTrees.JsonExpressionTree import JsonExpressionTree
 
 __author__ = "Austin Drenski"
-__project__ = "GE-Gravity"
+__project__ = "GE-Gravity.JsonExpressionTrees"
 
 
 class TestJsonExpressionTree(TestCase):
