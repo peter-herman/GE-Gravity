@@ -57,8 +57,7 @@ class TestJsonExpressionTree(TestCase):
         g = ast.parse(inspect.getsource(f).strip())
 
         for g0 in g.body:
-            print("g0: {0}".format(JsonExpressionTree.visit(g0)))
             for g1 in g0.targets:
-                print("g1: {0}".format(JsonExpressionTree.visit(g1)))
                 print("g1.id: {0}".format(g1.id))
                 print("g1.ctx: {0}".format(g1.ctx))
+                print("g1: {0}".format(JsonExpressionTree.visit(g1)))

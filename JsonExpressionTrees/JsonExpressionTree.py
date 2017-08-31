@@ -101,19 +101,35 @@ class JsonExpressionTree(object):
             return JsonExpressionTree.visit(node.targets[0])
 
         elif isinstance(node, ast.Name):
-            localsLookup = locals()
+            # localLookup = locals()
+            #
+            # if node.id in localLookup:
+            #     return JsonExpressionTree.visit(localLookup[node.id])
+            #
+            # globalLookup = globals()
+            #
+            # if node.id in globalLookup:
+            #     return JsonExpressionTree.visit(globalLookup[node.id])
 
-            globalLookup = globals()
+            # f_localLookup = inspect.currentframe().f_back.f_locals
+            #
+            # if node.id in f_localLookup:
+            #     return JsonExpressionTree.visit(f_localLookup[node.id])
 
-            name = node.id
+            for frameInfo in inspect.stack():
+                frameMembers = inspect.getmembers(frameInfo.frame)
 
-            if name in localsLookup:
-                return JsonExpressionTree.visit(localsLookup[name])
+                frameLocals = next(filter(lambda x: x[0] is "f_locals", frameMembers), None)[1]
 
-            elif name in globalLookup:
-                return JsonExpressionTree.visit(globalLookup[name])
+                if node.id in frameLocals:
+                    return JsonExpressionTree.visit(frameLocals[node.id])
 
-            return JsonExpressionTree._parameter_node(name)
+                frameGlobals = next(filter(lambda x: x[0] is "f_globals", frameMembers), None)[1]
+
+                if node.id in frameGlobals:
+                    return JsonExpressionTree.visit(frameGlobals[node.id])
+
+            return JsonExpressionTree._parameter_node(node.id)
 
         elif isinstance(node, ast.UnaryOp):
             return JsonExpressionTree._unary_node(
