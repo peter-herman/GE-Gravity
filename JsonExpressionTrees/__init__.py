@@ -1,0 +1,5 @@
+__author__ = "Austin Drenski"
+__project__ = "GE-Gravity"
+__created__ = "8-31-2017"
+__altered__ = "8-31-2017"
+__version__ = "1.0.0"
