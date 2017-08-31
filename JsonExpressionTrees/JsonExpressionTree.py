@@ -10,6 +10,7 @@ __altered__ = "8-31-2017"
 __version__ = "1.0.0"
 
 
+# noinspection PyPep8Naming
 class JsonExpressionTree(object):
     """
     Represents an abstract syntax tree serialized into JSON.

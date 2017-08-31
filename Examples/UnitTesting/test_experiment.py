@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from experiment import Experiment
+from Examples.UnitTesting.Experiment import Experiment
 
 __author__ = "Austin Drenski"
-__project__ = "UnitTestingExample"
+__project__ = "UnitTesting"
 
 
 class TestExperiment(TestCase):
@@ -12,7 +12,7 @@ class TestExperiment(TestCase):
     """
 
     def test_evaluate_derivative(self):
-        self.fail()
+        pass
 
     def test_evaluate(self):
         # Arrange
