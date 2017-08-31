@@ -4,7 +4,8 @@ import json
 
 __all__ = ["JsonExpressionTree"]
 __author__ = "Austin Drenski"
-__created__ = "8-31-2017"
+__project__ = "GE-Gravity.JsonExpressionTrees"
+__created__ = "8-30-2017"
 __altered__ = "8-31-2017"
 __version__ = "1.0.0"
 
@@ -51,7 +52,7 @@ class JsonExpressionTree(object):
 
         return self._json_formatted
 
-    def __init__(self, func: object):
+    def __init__(self, func: callable) -> None:
         """
         Constructs a JsonExpressionTree from a given function.
         :param func: a function to be serialized.
@@ -90,7 +91,9 @@ class JsonExpressionTree(object):
 
         elif isinstance(node, ast.Name):
             localsLookup = locals()
+
             globalLookup = globals()
+
             name = node.id
 
             if name in localsLookup:
@@ -196,28 +199,34 @@ class JsonExpressionTree(object):
         }
 
     def __repr__(self) -> str:
-        return self.json
+
+        return self._json
 
     def __str__(self) -> str:
-        return self.json_formatted
+
+        return self._json_formatted
 
     def __eq__(self, other) -> bool:
+
         if other is JsonExpressionTree:
             return self.tree == other.tree
 
         if other is dict:
-            return self.tree == other
+            return self._tree == other
 
         if other is str:
-            return self.json == other
+            return self._json == other
 
         return False
 
     def __ne__(self, other) -> bool:
+
         return not self.__eq__(other)
 
     def __bool__(self) -> bool:
-        return self.tree is not None
+
+        return self._tree is not None
 
     def __hash__(self) -> int:
-        return self.tree.__hash__()
+
+        return self._tree.__hash__()

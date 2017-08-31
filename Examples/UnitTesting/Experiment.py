@@ -21,7 +21,7 @@ class Experiment(object):
 
     _T = TypeVar("T", int, float)
 
-    def __init__(self, a: _T, b: _T):
+    def __init__(self, a: _T, b: _T) -> None:
         """
         Constructs an experiment with a specific parametrization.
         :param a: The alpha parameter.
