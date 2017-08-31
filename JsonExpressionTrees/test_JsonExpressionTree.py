@@ -9,6 +9,10 @@ __altered__ = "8-31-2017"
 __version__ = "1.0.0"
 
 
+def outer_func(x: int, y: int) -> int:
+    return abs(x) ** y
+
+
 class TestJsonExpressionTree(TestCase):
     def test_visit_0(self) -> None:
 
@@ -33,3 +37,28 @@ class TestJsonExpressionTree(TestCase):
         e = JsonExpressionTree(lambda x: g + f * x)
 
         self.assertIsNotNone(e.json_formatted)
+
+    def test_visit_3(self) -> None:
+
+        f = 10
+
+        e = JsonExpressionTree(lambda x: outer_func(f, x))
+
+        print(e.json_formatted)
+
+        self.assertIsNotNone(e.json_formatted)
+
+    def test_visit_4(self) -> None:
+        import ast
+        import inspect
+
+        f = lambda x, y: outer_func(x, y)
+
+        g = ast.parse(inspect.getsource(f).strip())
+
+        for g0 in g.body:
+            print("g0: {0}".format(JsonExpressionTree.visit(g0)))
+            for g1 in g0.targets:
+                print("g1: {0}".format(JsonExpressionTree.visit(g1)))
+                print("g1.id: {0}".format(g1.id))
+                print("g1.ctx: {0}".format(g1.ctx))

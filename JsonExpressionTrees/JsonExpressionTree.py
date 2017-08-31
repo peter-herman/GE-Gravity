@@ -62,8 +62,11 @@ class JsonExpressionTree(object):
             raise TypeError
 
         self._source = inspect.getsource(func).strip()
+
         self._tree = self.visit(ast.parse(self._source))
+
         self._json = json.dumps(self._tree, separators=(",", ":"))
+
         self._json_formatted = json.dumps(self._tree, indent=2)
 
     @staticmethod
@@ -88,6 +91,14 @@ class JsonExpressionTree(object):
 
         elif isinstance(node, ast.Num):
             return JsonExpressionTree._constant_node(node.n)
+
+        elif isinstance(node, ast.Assign):
+            # TODO: This is fragile. I think I need it for local variable declarations, but having trouble getting a test to hit this block.
+
+            if len(node.targets) != 1:
+                raise Exception
+
+            return JsonExpressionTree.visit(node.targets[0])
 
         elif isinstance(node, ast.Name):
             localsLookup = locals()
