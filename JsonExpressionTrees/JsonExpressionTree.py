@@ -66,6 +66,11 @@ class JsonExpressionTree(object):
 
         self._tree = self.visit(ast.parse(self._source))
 
+        if self._tree["type"] == "unary":
+            if self._tree["operator"]["type"] == "unknown":
+                if self._tree["operator"]["value"] == "<class 'JsonExpressionTrees.JsonExpressionTree'>":
+                    self._tree = self._tree["operand"]
+
         self._json = json.dumps(self._tree, separators=(",", ":"))
 
         self._json_formatted = json.dumps(self._tree, indent=2)
@@ -119,13 +124,12 @@ class JsonExpressionTree(object):
                 if node.id in frameGlobals:
                     return JsonExpressionTree.visit(frameGlobals[node.id])
 
+                frameBuiltIns = next(filter(lambda x: x[0] is "f_builtins", frameMembers), None)[1]
+
+                if node.id in frameBuiltIns:
+                    return JsonExpressionTree.visit(frameBuiltIns[node.id])
+
             return JsonExpressionTree._parameter_node(node.id)
-
-        if isinstance(node, ast.Add):
-            return JsonExpressionTree._operator_node("Addition")
-
-        if isinstance(node, ast.Pow):
-            return JsonExpressionTree._operator_node("Power")
 
         if isinstance(node, ast.UnaryOp):
             return JsonExpressionTree._unary_node(
@@ -150,40 +154,49 @@ class JsonExpressionTree(object):
                     JsonExpressionTree.visit(node.args[0]),
                     JsonExpressionTree.visit(node.args[1]))
 
+        if isinstance(node, ast.Add):
+            return JsonExpressionTree._operator_node("Add")
+
+        if isinstance(node, ast.Pow):
+            return JsonExpressionTree._operator_node("Pow")
+
+        if repr(node) == "<built-in function abs>":
+            return JsonExpressionTree._operator_node("Abs")
+
         return JsonExpressionTree._unknown_node(repr(node))
 
     @staticmethod
-    def _unary_node(operator: dict, operand_0: dict) -> dict:
+    def _unary_node(operator: dict, operand: dict) -> dict:
 
         if operator is None:
             raise TypeError
 
-        if operand_0 is None:
+        if operand is None:
             raise TypeError
 
         return {
             "type": "unary",
             "operator": operator,
-            "operand_0": operand_0
+            "operand": operand
         }
 
     @staticmethod
-    def _binary_node(operator: dict, operand_0: dict, operand_1: dict) -> dict:
+    def _binary_node(operator: dict, operand_left: dict, operand_right: dict) -> dict:
 
         if operator is None:
             raise TypeError
 
-        if operand_0 is None:
+        if operand_left is None:
             raise TypeError
 
-        if operand_1 is None:
+        if operand_right is None:
             raise TypeError
 
         return {
             "type": "binary",
             "operator": operator,
-            "operand_0": operand_0,
-            "operand_1": operand_1
+            "operand_left": operand_left,
+            "operand_right": operand_right
         }
 
     @staticmethod

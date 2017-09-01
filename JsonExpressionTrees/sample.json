@@ -1,40 +1,33 @@
 {
-  "type": "unary",
+  "type": "binary",
   "operator": {
-    "type": "unknown",
-    "value": "<class 'JsonExpressionTrees.JsonExpressionTree'>"
-  },
-  "operand_0": {
     "type": "binary",
     "operator": {
-      "type": "binary",
+      "type": "operator",
+      "value": "Pow"
+    },
+    "operand_left": {
+      "type": "unary",
       "operator": {
         "type": "operator",
-        "value": "Power"
+        "value": "Abs"
       },
-      "operand_0": {
-        "type": "unary",
-        "operator": {
-          "type": "parameter",
-          "value": "abs"
-        },
-        "operand_0": {
-          "type": "parameter",
-          "value": "x"
-        }
-      },
-      "operand_1": {
+      "operand": {
         "type": "parameter",
-        "value": "y"
+        "value": "x"
       }
     },
-    "operand_0": {
-      "type": "constant",
-      "value": 10
-    },
-    "operand_1": {
+    "operand_right": {
       "type": "parameter",
-      "value": "x"
+      "value": "y"
     }
+  },
+  "operand_left": {
+    "type": "constant",
+    "value": 10
+  },
+  "operand_right": {
+    "type": "parameter",
+    "value": "x"
   }
 }
