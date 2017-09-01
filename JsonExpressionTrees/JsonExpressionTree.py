@@ -1,6 +1,7 @@
 import ast
 import inspect
 import json
+import types
 
 __all__ = ["JsonExpressionTree"]
 __author__ = "Austin Drenski"
@@ -80,42 +81,31 @@ class JsonExpressionTree(object):
         if node is None:
             raise TypeError
 
-        if isinstance(node, ast.Module):
-            return JsonExpressionTree.visit(node.body[0].value)
+        if isinstance(node, types.FunctionType):
+            return JsonExpressionTree.visit(ast.parse(inspect.getsource(node)))
 
-        elif isinstance(node, ast.Lambda):
+        if isinstance(node, ast.Module):
+            return JsonExpressionTree.visit(node.body[0])
+
+        if isinstance(node, ast.Lambda):
             return JsonExpressionTree.visit(node.body)
 
-        elif isinstance(node, int) or isinstance(node, float):
+        if isinstance(node, ast.FunctionDef):
+            return JsonExpressionTree.visit(node.body[0].value)
+
+        if isinstance(node, ast.Return):
+            return JsonExpressionTree.visit(node.value)
+
+        if isinstance(node, int) or isinstance(node, float):
             return JsonExpressionTree._constant_node(node)
 
-        elif isinstance(node, ast.Num):
+        if isinstance(node, ast.Num):
             return JsonExpressionTree._constant_node(node.n)
 
-        elif isinstance(node, ast.Assign):
-            # TODO: This is fragile. I think I need it for local variable declarations, but having trouble getting a test to hit this block.
+        if isinstance(node, ast.Assign):
+            return JsonExpressionTree.visit(node.value)
 
-            if len(node.targets) != 1:
-                raise Exception
-
-            return JsonExpressionTree.visit(node.targets[0])
-
-        elif isinstance(node, ast.Name):
-            # localLookup = locals()
-            #
-            # if node.id in localLookup:
-            #     return JsonExpressionTree.visit(localLookup[node.id])
-            #
-            # globalLookup = globals()
-            #
-            # if node.id in globalLookup:
-            #     return JsonExpressionTree.visit(globalLookup[node.id])
-
-            # f_localLookup = inspect.currentframe().f_back.f_locals
-            #
-            # if node.id in f_localLookup:
-            #     return JsonExpressionTree.visit(f_localLookup[node.id])
-
+        if isinstance(node, ast.Name):
             for frameInfo in inspect.stack():
                 frameMembers = inspect.getmembers(frameInfo.frame)
 
@@ -131,18 +121,24 @@ class JsonExpressionTree(object):
 
             return JsonExpressionTree._parameter_node(node.id)
 
-        elif isinstance(node, ast.UnaryOp):
+        if isinstance(node, ast.Add):
+            return JsonExpressionTree._operator_node("Addition")
+
+        if isinstance(node, ast.Pow):
+            return JsonExpressionTree._operator_node("Power")
+
+        if isinstance(node, ast.UnaryOp):
             return JsonExpressionTree._unary_node(
                 JsonExpressionTree.visit(node.op),
                 JsonExpressionTree.visit(node.operand))
 
-        elif isinstance(node, ast.BinOp):
+        if isinstance(node, ast.BinOp):
             return JsonExpressionTree._binary_node(
                 JsonExpressionTree.visit(node.op),
                 JsonExpressionTree.visit(node.left),
                 JsonExpressionTree.visit(node.right))
 
-        elif isinstance(node, ast.Call):
+        if isinstance(node, ast.Call):
             if len(node.args) == 1:
                 return JsonExpressionTree._unary_node(
                     JsonExpressionTree.visit(node.func),
@@ -153,32 +149,8 @@ class JsonExpressionTree(object):
                     JsonExpressionTree.visit(node.func),
                     JsonExpressionTree.visit(node.args[0]),
                     JsonExpressionTree.visit(node.args[1]))
-            else:
-                return JsonExpressionTree._unknown_node(repr(node))
 
         return JsonExpressionTree._unknown_node(repr(node))
-
-    @staticmethod
-    def _constant_node(value: float) -> dict:
-
-        if value is None:
-            raise TypeError
-
-        return {
-            "type": "constant",
-            "value": value
-        }
-
-    @staticmethod
-    def _parameter_node(name: str) -> dict:
-
-        if name is None:
-            raise TypeError
-
-        return {
-            "type": "parameter",
-            "name": name
-        }
 
     @staticmethod
     def _unary_node(operator: dict, operand_0: dict) -> dict:
@@ -215,6 +187,35 @@ class JsonExpressionTree(object):
         }
 
     @staticmethod
+    def _operator_node(value: str) -> dict:
+        return {
+            "type": "operator",
+            "value": value
+        }
+
+    @staticmethod
+    def _constant_node(value: float) -> dict:
+
+        if value is None:
+            raise TypeError
+
+        return {
+            "type": "constant",
+            "value": value
+        }
+
+    @staticmethod
+    def _parameter_node(name: str) -> dict:
+
+        if name is None:
+            raise TypeError
+
+        return {
+            "type": "parameter",
+            "value": name
+        }
+
+    @staticmethod
     def _unknown_node(unknown: object) -> dict:
 
         if unknown is None:
@@ -222,7 +223,7 @@ class JsonExpressionTree(object):
 
         return {
             "type": "unknown",
-            "object": unknown
+            "value": unknown
         }
 
     def __repr__(self) -> str:
