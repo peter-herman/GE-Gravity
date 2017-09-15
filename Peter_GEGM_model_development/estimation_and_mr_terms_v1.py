@@ -25,8 +25,11 @@ for col in delete_columns:
     del grav_data[col]
 
 # Create a new set of dummies
-grav_data = pd.get_dummies(grav_data, "imp", columns = ["importer"]) #Create fixed effects
-grav_data = pd.get_dummies(grav_data, "exp", columns = ["exporter"]) #Create fixed effects
+#df = pd.concat([df, pd.get_dummies(df['YEAR'])], axis=1); df
+grav_data['importer_fe'] = grav_data['importer'] #create a second variable of country identifiers because get_dummies canibalizes one
+grav_data['exporter_fe'] = grav_data['exporter']
+grav_data = pd.get_dummies(grav_data, "imp", columns = ["importer_fe"]) #Create fixed effects
+grav_data = pd.get_dummies(grav_data, "exp", columns = ["exporter_fe"]) #Create fixed effects
 
 reg_data = grav_data #create a temporary dataset from which to delete the German importer fixed effect
 del reg_data['imp_ZZZ'] #delete variable 'imp_ZZZ'
@@ -51,9 +54,16 @@ ppml_output.summary() #print output
 ###############
 # Trade Costs #
 ###############
-#gen t_ij_bsln=exp(_b[LN_DIST]*LN_DIST+_b[CNTG]*CNTG+_b[BRDR]*BRDR)
-cost = 'LN_DIST'
-grav_data['t_ij_bsln'] = 0
-for cost in select_vars:
-    grav_data['t_ij_bsln'] += ppml_output.params[cost]*grav_data[cost]
 
+# Baseline
+grav_data['t_ij_bsln'] = 0 # initialize variable
+for cost in select_vars: # for each of the included costs from before
+    grav_data['t_ij_bsln'] += ppml_output.params[cost]*grav_data[cost] # add beta_cost * cost_ij
+grav_data['t_ij_bsln'] = np.exp(grav_data['t_ij_bsln']) # t_ij = exp(costs)
+
+# Counterfactual
+grav_data['t_ij_cfl'] = 0 # initialize variable
+cfl_vars = ['LN_DIST', 'CNTG'] # define the costs to be included in the counterfactual
+for cost in cfl_vars: # for each of the included costs from before
+    grav_data['t_ij_cfl'] += ppml_output.params[cost] * grav_data[cost] # add beta_cost * cost_ij
+grav_data['t_ij_cfl'] = np.exp(grav_data['t_ij_cfl']) # t_ij = exp(costs)
