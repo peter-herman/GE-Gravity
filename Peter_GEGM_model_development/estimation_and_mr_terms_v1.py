@@ -1,4 +1,4 @@
-___author___ = Peter Herman
+___author___ = "Peter Herman"
 ___created___ = "09/15/2017"
 ___altered___ = "09/15/2017"
 
@@ -45,7 +45,6 @@ endog_var = reg_data['trade']
 exog_var = reg_data[select_full]
 
 ### Poisson Model
-FormulaFE = 'trade ~ LN_DIST + CNTG + BRDR + C(importer) + C(exporter) + C(year)' #define a regression formula with fixed effects; C() creates a categorical variable
 ppml_output = smf.GLM(endog_var, exog_var, family = sm.families.Poisson()).fit(cov_type='HC1')
 ppml_output.summary() #print output
 
@@ -67,3 +66,9 @@ cfl_vars = ['LN_DIST', 'CNTG'] # define the costs to be included in the counterf
 for cost in cfl_vars: # for each of the included costs from before
     grav_data['t_ij_cfl'] += ppml_output.params[cost] * grav_data[cost] # add beta_cost * cost_ij
 grav_data['t_ij_cfl'] = np.exp(grav_data['t_ij_cfl']) # t_ij = exp(costs)
+
+
+# Reformat Wide
+trade_costs = grav_data[['importer','exporter','t_ij_bsln']]
+trade_costs['t_exp_'] = trade_costs.groupby('exporter').cumcount()
+trade_costs_wide = trade_costs.pivot('importer', 'exporter', 't_ij_bsln')
