@@ -1,5 +1,4 @@
 from typing import Callable, List
-
 __all__ = ["join"]
 __author__ = "Austin Drenski"
 __project__ = "Joining"
@@ -25,7 +24,11 @@ def join(left: List, right: List, left_select: Callable, right_select: Callable)
     for item in right:
         key = right_select(item)
         left_value = dictionary.get(key, (None, None))
+        if left_value[0] is None:
+            continue
         dictionary[key] = (left_value[0], item)
+
+    dictionary2 = filter(lambda x: x.value[0] is not None and x.value[1] is not None, dictionary)
 
     return dictionary
 
@@ -53,9 +56,16 @@ class KeyValuePair(object):
         return self.__str__()
 
 
-a = [KeyValuePair(value, value < 5) for value in range(10)]
-b = [KeyValuePair(value, value > 5) for value in reversed(range(11))]
+gdp = [KeyValuePair(value, value < 5) for value in range(10)]
+pop = [KeyValuePair(value, value > 5) for value in reversed(range(11))]
 
-c = join(a, b, lambda x: x.key, lambda x: x.key)
+select1 = lambda x: x.key
+
+
+def select2(x):
+    return x.key
+
+
+gdp_pop = join(gdp, pop, select1, select2)
 
 d = join(range(0, 10), range(1, 11), lambda x: x, lambda x: x)
