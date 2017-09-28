@@ -28,8 +28,6 @@ def join(left: List, right: List, left_select: Callable, right_select: Callable)
             continue
         dictionary[key] = (left_value[0], item)
 
-    dictionary2 = filter(lambda x: x.value[0] is not None and x.value[1] is not None, dictionary)
-
     return dictionary
 
 
