@@ -105,14 +105,15 @@ country_stats['expend_share'] = country_stats['expndr']/total_expenditure
 ###
 #Set up MRS solver
 ####
-mrs = pd.DataFrame(country_stats.importer)
-mrs['mrs_inward'] = 1
-mrs['mrs_outward'] = 1
-mrs.set_index('importer', drop = True, inplace = True)
+
 country_info = country_stats
 
-def mrs_functions(mrs, trade_costs, country_info,country_list):
+mrs0 = np.zeros(82)
+
+def mrs_functions(mrs_vec, trade_costs, country_info,country_list):
     mrs_slack = np.zeros(2*len(country_info.importer))  # create list of zeros
+    mrs_inward = mrs_vec[0:len(country_info.importer)]
+    mrs_outward = mrs_vec[len(country_info.importer):2*len(country_info.importer)]
     for i in range(len(country_info.importer)-1):
         imp_index = country_list.iloc[i] #select a country for the current iteration for an index location
         cost_calculation = 0
@@ -120,8 +121,8 @@ def mrs_functions(mrs, trade_costs, country_info,country_list):
             exp_index = country_list.iloc[k]
             cost_calculation += trade_costs_imp.loc[imp_index, exp_index] * \
                     country_info.output_share.loc[exp_index] * \
-                    mrs.mrs_outward.loc[exp_index]
-        mrs_slack[i] = 1 - mrs.mrs_inward.loc[imp_index] * cost_calculation
+                    mrs_outward[k]
+        mrs_slack[i] = 1 - mrs_inward[i] * cost_calculation
 
     for j in range(len(country_info.importer)):
         exp_index = country_list.iloc[j]
@@ -131,13 +132,13 @@ def mrs_functions(mrs, trade_costs, country_info,country_list):
             cost_calculation += trade_costs_imp.loc[imp_index,exp_index] *\
                     country_info.expend_share.loc[imp_index] * \
                     mrs.mrs_inward.loc[imp_index]
-        mrs_slack[j + len(country_info.importer)] = 1 - mrs.mrs_outward.loc[exp_index] * cost_calculation
+        mrs_slack[j + len(country_info.importer)] = 1 - mrs_outward[j] * cost_calculation
     return mrs_slack
 
-
-mrs_functions(mrs,trade_costs_imp,country_stats, country_list)
+mrs0 = np.zeros(len(country_list)*2)
+mrs_functions(mrs_vec,trade_costs_imp,country_stats, country_list)
 
 feeder = lambda mrs_0: mrs_functions(mrs_0, trade_costs_imp,country_stats, country_list)
 
-solution_1 = spo.root(feeder, mrs)
+solution_1 = spo.root(feeder, mrs0)
 #It does not seem to like having a dataframe fed in as an optimization arguement. Try convertin mrs to a simple vector.
