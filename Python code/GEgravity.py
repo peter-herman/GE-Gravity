@@ -61,12 +61,12 @@ print(GLMres.summary())
 #calculate trade costs to the power of (1-sigma) using GLM estimates
 tc_baseline=np.exp(GLMres.params['LN_DIST']*rhs['LN_DIST']+GLMres.params['CNTG']*rhs['CNTG']+GLMres.params['BRDR']*rhs['BRDR'])
 tc_baseline=pd.concat([df[['exporter','importer']],tc_baseline],axis=1)
-tc_baseline.rename(columns={0: 'trade_costs_sigma'},inplace=True)
+tc_baseline.rename(columns={0: 'trade_cost_sigma'},inplace=True)
 tc_baseline.sort_values(['exporter','importer'],inplace=True)
 #calculate trade costs
-tc_baseline['trade_costs']=tc_baseline['trade_costs_sigma']**(1/(1-sigma))
+tc_baseline['trade_cost']=tc_baseline['trade_cost_sigma']**(1/(1-sigma))
 print('\nSummary of trade cost values:')
-print(tc_baseline['trade_costs'].describe())
+print(tc_baseline['trade_cost'].describe())
 
 ### STEP 3 ###
 #solve for the baseline IMR and OMR
@@ -82,9 +82,9 @@ list_of_countries=cdata['country']
 # (b) prepare z parameters (bilateral)
 zparams=tc_baseline.merge(cdata[['country','y1']],how='left',left_on='exporter',right_on='country')
 zparams=zparams.merge(cdata[['country','y2']],how='left',left_on='importer',right_on='country')
-zparams['z1']=mult(zparams['trade_costs_sigma'],zparams['y1'])
-zparams['z2']=mult(zparams['trade_costs_sigma'],zparams['y2'])
-zparams.drop(['trade_costs_sigma','country_x','country_y','y1','y2'],axis=1,inplace=True)
+zparams['z1']=mult(zparams['trade_cost_sigma'],zparams['y1'])
+zparams['z2']=mult(zparams['trade_cost_sigma'],zparams['y2'])
+zparams.drop(['trade_cost_sigma','country_x','country_y','y1','y2'],axis=1,inplace=True)
 zparams.sort_values(['exporter','importer'],inplace=True)
 z1=zparams.pivot(index='exporter', columns='importer', values='z1') #create a matrix (exporter,importer)
 z2=zparams.pivot(index='exporter', columns='importer', values='z2') #create a matrix (exporter,importer)
@@ -109,8 +109,10 @@ beta_baseline=cdata['y1'].as_matrix()*omr_baseline #preference parameters (basel
 
 ### STEP 4 ###
 # package the baseline model
-country_variables=cdata[['country','output','expenditure']]
-bilateral_variables=df[['exporter','importer','trade']]
+country_variables=pd.concat([cdata[['country','output','expenditure']],
+                             pd.DataFrame(data=imr_baseline,columns=['IMR']),
+                             pd.DataFrame(data=omr_baseline,columns=['OMR'])],axis=1)
+bilateral_variables=df[['exporter','importer','trade']].merge(tc_baseline, how='inner', on=['exporter','importer'])
 baseline=model_state('Baseline AvW gravity model',current_date_and_time(),country_variables,
                      bilateral_variables,N,GLMres,solver_res)
 
