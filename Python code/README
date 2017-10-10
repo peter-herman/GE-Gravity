@@ -1,0 +1,1 @@
+This folder contains the python code that estimates and simulates the GE gravity model.
