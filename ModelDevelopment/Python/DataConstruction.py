@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -7,7 +7,13 @@ import statsmodels.api as sm
 from ModelDevelopment.Python.Classes.Country import Country
 
 
-def Construct(stata_data_path: str) -> List[Country]:
+def Construct(stata_data_path: str) -> Iterable[Country]:
+    """
+    This function exists to encapsulate ugly data manipulations until it can be refactored into a formal object factory.
+    :param stata_data_path: The path to the Stata data file against which we are prototyping.
+    :return: A collection of country data objects.
+    """
+
     df = pd.read_stata(stata_data_path)
 
     # run glm poisson estimation with internally created fixed effects

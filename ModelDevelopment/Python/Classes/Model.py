@@ -27,8 +27,8 @@ class Model(object):
         "last_solution_success"
     ]
 
-    def __init__(self, records: List[Country], normalized_name: str, equation: Callable[[List[Country], int, List[float]], Iterable[float]]) -> None:
-        self.records = records
+    def __init__(self, records: Iterable[Country], normalized_name: str, equation: Callable[[List[Country], int, List[float]], Iterable[float]]) -> None:
+        self.records = list(records)
         self.normalized_name = normalized_name
         self.equation = partial(equation, records, [x.name for x in records].index(normalized_name))
         self.last_solution_time = 0
