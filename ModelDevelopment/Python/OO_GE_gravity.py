@@ -15,6 +15,14 @@ __version__ = "1.1.0"
 
 
 def func_base_mr1(records: List[Country], normal_index: int, x: List[float]) -> Iterable[float]:
+    """
+    This is the function we will pass to the model. It takes three arguments that the model will bind with data elements.
+    :param records: A collection of country data.
+    :param normal_index: The index in the country data collection of the normalized country.
+    :param x: The argument vector supplied by the optimization routine.
+    :return: An iterable collection of values.
+    """
+
     count = len(records)
 
     imr = [0] * count
