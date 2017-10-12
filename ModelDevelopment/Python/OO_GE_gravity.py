@@ -30,13 +30,11 @@ def func_base_mr1(records: List[Country], normal_index: int, x: List[float]) -> 
 
     for i in range(count):
         name = records[i].name
-        imr[i] = x[i] * sum([records[j].export_cost_by_output_share[name] * x[j + count] for j in range(count)])
-
-    x[normal_index] = 1
+        imr[i] = x[i] * sum(x[j + count] * records[j].export_cost_by_output_share[name] for j in range(count))
 
     for i in range(count):
         name = records[i].name
-        omr[i] = x[i + count] * sum([records[j].import_cost_by_expenditure_share[name] * x[j] for j in range(count)])
+        omr[i] = x[i + count] * sum(x[j] * records[j].import_cost_by_expenditure_share[name] for j in range(count))
 
     return [1 - 1000 * item for item in imr + omr]
 
