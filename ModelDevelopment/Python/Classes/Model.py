@@ -23,14 +23,16 @@ class Model(object):
         "equation",
         "records",
         "normalized_name",
+        "normalized_index",
         "last_solution_time",
         "last_solution_success"
     ]
 
-    def __init__(self, records: Iterable[Country], normalized_name: str, equation: Callable[[List[Country], int, List[float]], Iterable[float]]) -> None:
+    def __init__(self, records: Iterable[Country], normalized_name: str, equation: Callable[[List[Country], List[float]], Iterable[float]]) -> None:
         self.records = list(records)
         self.normalized_name = normalized_name
-        self.equation = partial(equation, records, [x.name for x in records].index(normalized_name))
+        self.normalized_index = [x.name for x in records].index(normalized_name)
+        self.equation = partial(equation, records)
         self.last_solution_time = 0
         self.last_solution_success = False
 
@@ -77,6 +79,11 @@ class Model(object):
         inward_resistances = results[:count]
 
         outward_resistances = 1000 * results[count:]
+
+        if inward:
+            inward_resistances[self.normalized_index] = 1
+        else:
+            outward_resistances[self.normalized_index] = 1
 
         return zip([x.name for x in self.records], inward_resistances, outward_resistances)
 
