@@ -107,6 +107,9 @@ class Model(object):
         if not isinstance(x0, np.ndarray):
             x0 = np.asarray(x0)
 
+        if len(x0) != len(self.__countries):
+            raise ValueError("Expected sequence of {0} values, but received {1} values.".format(len(self.__countries), len(x0)))
+
         start = time()
 
         results = root(fun=self.__equation, x0=x0, method=method, tol=tol, options={"xtol": xtol, "maxfev": maxfev})
@@ -126,12 +129,12 @@ class Model(object):
         bind0 = partial(equation, self.__countries)
 
         def __wrapped_function(x: List[float]) -> List[float]:
-            x[self.normalized_index] = 1.0
+            # x[self.normalized_index] = 1.0
             return bind0(x)
 
         return __wrapped_function
 
-    def __normalize_baseline(self, results: Sequence[float]) -> Sequence[ModelResult]:
+    def __normalize_baseline(self, results: Sequence[float], inward: bool = True) -> Sequence[ModelResult]:
         """
         This function takes the raw results from the optimization routine and constructs a list of tuples to return to the user.
         :param results: The results of the optimization.
@@ -143,9 +146,11 @@ class Model(object):
 
         count = len(self.__countries)
 
-        inward_resistances = (x for x in results[:count])
+        base = results[self.normalized_index + (0 if inward else count)]
 
-        outward_resistances = (x for x in results[count:])
+        inward_resistances = (x / base for x in results[:count])
+
+        outward_resistances = (x / base for x in results[count:])
 
         names = (x.name for x in self.__countries)
 
@@ -194,5 +199,4 @@ class Model(object):
         """
         Returns a string representation of the object.
         """
-        return "(normalized_name:{0}, success: {1}, elapsed: {2})".format(self.__normalized_name, self.__is_valid,
-                                                                          self.__time_elapsed)
+        return "(normalized_name:{0}, success: {1}, elapsed: {2})".format(self.__normalized_name, self.__is_valid, self.__time_elapsed)
