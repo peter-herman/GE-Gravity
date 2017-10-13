@@ -1,6 +1,6 @@
 from functools import partial
 from time import time
-from typing import Callable, NamedTuple, Union, Sequence
+from typing import Callable, List, NamedTuple, Sequence, Union
 
 import numpy as np
 from scipy.optimize import root
@@ -75,8 +75,7 @@ class Model(object):
         """
         return self.__time_elapsed
 
-    def __init__(self, countries: Sequence[Country], normalized_name: str,
-                 equation: Callable[[Sequence[Country], Sequence[float]], Sequence[float]]) -> None:
+    def __init__(self, countries: Sequence[Country], normalized_name: str, equation: Callable[[List[Country], List[float]], List[float]]) -> None:
         self.__countries = list(countries)
 
         if len(self.__countries) == 0:
@@ -86,7 +85,7 @@ class Model(object):
             raise ValueError("{0} not found in country collection".format(normalized_name))
 
         self.__normalized_name = normalized_name
-        self.__equation = partial(equation, self.__countries)
+        self.__equation = self.__wrap_equation(equation)
         self.__time_elapsed = 0
         self.__is_valid = False
 
@@ -116,6 +115,21 @@ class Model(object):
         self.__is_valid = results.success
 
         return self.__normalize_baseline(results.x)
+
+    def __wrap_equation(self, equation: Callable[[List[Country], List[float]], List[float]]) -> Callable[[List[float]], List[float]]:
+        """
+        This function wraps the user-defined delegate to handle normalizing to the specified country.
+        :param equation: The user-defined delegate.
+        :return: A function suitable for use in the solve() function.
+        """
+
+        bind0 = partial(equation, self.__countries)
+
+        def __wrapped_function(x: List[float]) -> List[float]:
+            x[self.normalized_index] = 1.0
+            return bind0(x)
+
+        return __wrapped_function
 
     def __normalize_baseline(self, results: Sequence[float], inward: bool = True) -> Sequence[ModelResult]:
         """

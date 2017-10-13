@@ -3,7 +3,7 @@ Demonstrates how to use the proposed API to solve for baseline multilateral resi
 """
 from ModelDevelopment.Python.Classes.Model import Model
 from ModelDevelopment.Python.DataConstruction import Construct
-from ModelDevelopment.Python.Equation import calculate_multilateral_resistance
+from ModelDevelopment.Python.Equation import system_for_multilateral_resistance
 
 __author__ = "Serge Shikher, Austin Drenski"
 __project__ = "GE-Gravity.ModelDevelopment"
@@ -13,10 +13,11 @@ __version__ = "1.2.0"
 
 countries = Construct("G:/data/Gravity Resources/Gravity modeling in Python/GE gravity 10.3.2017/ge_ppml_data.dta")
 
-model = Model(countries=countries, normalized_name="ZZZ", equation=calculate_multilateral_resistance)
+model = Model(countries=countries, normalized_name="ZZZ", equation=system_for_multilateral_resistance)
 
 result = model.solve()
 
 print(result)
 print(model.time_elapsed)
 print(model.is_valid)
+system_for_multilateral_resistance(countries, [x.inward for x in result] + [x.outward for x in result])
