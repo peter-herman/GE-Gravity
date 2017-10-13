@@ -8,7 +8,7 @@ from ModelDevelopment.Python.Classes.Country import Country
 __author__ = "Serge Shikher, Austin Drenski"
 __project__ = "GE-Gravity.ModelDevelopment"
 __created__ = "10-11-2017"
-__altered__ = "10-12-2017"
+__altered__ = "10-13-2017"
 __version__ = "1.0.0"
 
 

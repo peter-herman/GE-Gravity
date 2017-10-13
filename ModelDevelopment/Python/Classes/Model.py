@@ -10,8 +10,8 @@ from ModelDevelopment.Python.Classes.Country import Country
 __author__ = "Austin Drenski"
 __project__ = "GE-Gravity.ModelDevelopment"
 __created__ = "10-4-2017"
-__altered__ = "10-11-2017"
-__version__ = "1.1.0"
+__altered__ = "10-13-2017"
+__version__ = "1.2.0"
 
 
 class ModelResult(NamedTuple):
@@ -131,7 +131,7 @@ class Model(object):
 
         return __wrapped_function
 
-    def __normalize_baseline(self, results: Sequence[float], inward: bool = True) -> Sequence[ModelResult]:
+    def __normalize_baseline(self, results: Sequence[float]) -> Sequence[ModelResult]:
         """
         This function takes the raw results from the optimization routine and constructs a list of tuples to return to the user.
         :param results: The results of the optimization.
@@ -144,11 +144,9 @@ class Model(object):
 
         count = len(self.__countries)
 
-        base = results[self.normalized_index + (0 if inward else count)]
+        inward_resistances = (x for x in results[:count])
 
-        inward_resistances = (x / base for x in results[:count])
-
-        outward_resistances = (x / base for x in results[count:])
+        outward_resistances = (x for x in results[count:])
 
         names = (x.name for x in self.__countries)
 
