@@ -135,7 +135,6 @@ class Model(object):
         """
         This function takes the raw results from the optimization routine and constructs a list of tuples to return to the user.
         :param results: The results of the optimization.
-        :param inward: True if the normalized entry is an inward resistance term; otherwise false.
         :return: A list of tuples containing inward and outward multilateral resistance terms by country.
         """
 
