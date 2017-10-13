@@ -1,6 +1,6 @@
 from functools import partial
 from time import time
-from typing import Callable, Iterable, List, Tuple
+from typing import Callable, NamedTuple, Union, Sequence
 
 import numpy as np
 from scipy.optimize import root
@@ -10,8 +10,17 @@ from ModelDevelopment.Python.Classes.Country import Country
 __author__ = "Austin Drenski"
 __project__ = "GE-Gravity.ModelDevelopment"
 __created__ = "10-4-2017"
-__altered__ = "10-10-2017"
-__version__ = "1.0.0"
+__altered__ = "10-11-2017"
+__version__ = "1.1.0"
+
+
+class ModelResult(NamedTuple):
+    """
+    Represents a model result for one country.
+    """
+    country: str
+    inward: float
+    outward: float
 
 
 class Model(object):
@@ -28,11 +37,22 @@ class Model(object):
     ]
 
     @property
-    def normalized_name(self) -> str:
+    def count(self) -> int:
+        return len(self.__countries)
+
+    @property
+    def countries(self) -> Sequence[Country]:
         """
-        The name of the country to which the results are normalized.
+        The collection of countries in the model.
         """
-        return self.__normalized_name
+        return [x for x in self.__countries]
+
+    @property
+    def is_valid(self) -> bool:
+        """
+        True if the previous solution was successful; otherwise false.
+        """
+        return self.__is_valid
 
     @property
     def normalized_index(self) -> int:
@@ -42,28 +62,21 @@ class Model(object):
         return [x.name for x in self.__countries].index(self.__normalized_name)
 
     @property
-    def countries(self) -> Iterable[Country]:
+    def normalized_name(self) -> str:
         """
-        The collection of countries in the model.
+        The name of the country to which the results are normalized.
         """
-        return (x for x in self.__countries)
+        return self.__normalized_name
 
     @property
-    def time_elapsed(self):
+    def time_elapsed(self) -> int:
         """
         The time elapsed during the previous solution.
         """
         return self.__time_elapsed
 
-    @property
-    def is_valid(self):
-        """
-        True if the previous solution was successful; otherwise false.
-        """
-        return self.__is_valid
-
-    def __init__(self, countries: Iterable[Country], normalized_name: str,
-                 equation: Callable[[Iterable[Country], List[float]], Iterable[float]]) -> None:
+    def __init__(self, countries: Sequence[Country], normalized_name: str,
+                 equation: Callable[[Sequence[Country], Sequence[float]], Sequence[float]]) -> None:
         self.__countries = list(countries)
 
         if len(self.__countries) == 0:
@@ -77,7 +90,8 @@ class Model(object):
         self.__time_elapsed = 0
         self.__is_valid = False
 
-    def solve(self, x0: List[float] = None, method: str = "hybr", tol: float = 1e-8, xtol: float = 1e-8, maxfev: int = 1400) -> Iterable[Tuple[str, float, float]]:
+    def solve(self, x0: Sequence[float] = None, method: str = "hybr", tol: float = 1e-8, xtol: float = 1e-8,
+              maxfev: int = 1400) -> Sequence[ModelResult]:
         """
         This function wraps the optimization and result construction tasks.
         :param x0:
@@ -103,7 +117,7 @@ class Model(object):
 
         return self.__normalize_baseline(results.x)
 
-    def __normalize_baseline(self, results: List[float], inward: bool = True) -> Iterable[Tuple[str, float, float]]:
+    def __normalize_baseline(self, results: Sequence[float], inward: bool = True) -> Sequence[ModelResult]:
         """
         This function takes the raw results from the optimization routine and constructs a list of tuples to return to the user.
         :param results: The results of the optimization.
@@ -116,7 +130,7 @@ class Model(object):
 
         count = len(self.__countries)
 
-        base = results[self.normalized_index if inward else self.normalized_index + count]
+        base = results[self.normalized_index + (0 if inward else count)]
 
         inward_resistances = (x / base for x in results[:count])
 
@@ -124,7 +138,40 @@ class Model(object):
 
         names = (x.name for x in self.__countries)
 
-        return list(zip(names, inward_resistances, outward_resistances))
+        return [ModelResult(x[0], x[1], x[2]) for x in iter(zip(names, inward_resistances, outward_resistances))]
+
+    def __getitem__(self, item: Union[str, int]) -> Country:
+        if isinstance(item, str):
+            return next(x for x in self.__countries if x.name == item)
+
+        if isinstance(item, int):
+            return self.__countries[item]
+
+    def __contains__(self, item: str) -> bool:
+        return any(x.name is item for x in self.__countries)
+
+    def __eq__(self, other: 'Model') -> bool:
+
+        if hash(self.__equation) != hash(other.__equation):
+            return False
+
+        if self.__normalized_name != other.__normalized_name:
+            return False
+
+        if len(self.__countries) != len(other.__countries):
+            return False
+
+        for i in range(len(self.__countries)):
+            if self.__countries[i] != other.__countries[i]:
+                return False
+
+        return True
+
+    def __ne__(self, other: 'Model') -> bool:
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return hash(self.__countries) + hash(self.__normalized_name) + hash(self.__equation)
 
     def __str__(self) -> str:
         """

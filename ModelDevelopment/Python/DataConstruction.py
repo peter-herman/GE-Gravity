@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Sequence
 
 import numpy as np
 import pandas as pd
@@ -7,7 +7,7 @@ import statsmodels.api as sm
 from ModelDevelopment.Python.Classes.Country import Country
 
 
-def Construct(stata_data_path: str) -> Iterable[Country]:
+def Construct(stata_data_path: str) -> Sequence[Country]:
     """
     This function exists to encapsulate ugly data manipulations until it can be refactored into a formal object factory.
     :param stata_data_path: The path to the Stata data file against which we are prototyping.

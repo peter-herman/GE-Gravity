@@ -3,8 +3,8 @@ from typing import Dict
 __author__ = "Austin Drenski"
 __project__ = "GE-Gravity.ModelDevelopment"
 __created__ = "10-4-2017"
-__altered__ = "10-10-2017"
-__version__ = "1.0.0"
+__altered__ = "10-11-2017"
+__version__ = "1.1.0"
 
 
 class Country(object):
@@ -32,7 +32,8 @@ class Country(object):
         self.export_cost_by_output_share = dict([(key, output_share * value) for key, value in export_trade_costs.items()])
 
     def __repr__(self) -> str:
-        return "({0}, {1}, {2})".format(self.name, self.expenditure_share, self.output_share)
+        return self.__str__()
 
     def __str__(self) -> str:
-        return self.__repr__()
+        return "(name='{0}', expenditure_share='{1}', output_share='{2}')".format(self.name, self.expenditure_share,
+                                                                                  self.output_share)
