@@ -25,15 +25,12 @@ def system_for_multilateral_resistance(countries: List[Country], x: List[float])
 
     count = len(countries)
 
-    imr = [0] * count
-    omr = [0] * count
+    imr_residuals = [0] * count
+    omr_residuals = [0] * count
 
     for i in range(count):
         name = countries[i].name
-        imr[i] = x[i] * sum(1000 * x[j + count] * countries[j].export_cost_by_output_share[name] for j in range(count))
+        imr_residuals[i] = x[i] * sum(x[j + count] * countries[j].export_cost_by_output_share[name] for j in range(count))
+        omr_residuals[i] = x[i + count] * sum(x[j] * countries[j].import_cost_by_expenditure_share[name] for j in range(count))
 
-    for i in range(count):
-        name = countries[i].name
-        omr[i] = 1000 * x[i + count] * sum(x[j] * countries[j].import_cost_by_expenditure_share[name] for j in range(count))
-
-    return [1 - item for item in imr + omr]
+    return [1 - 1000 * item for item in imr_residuals + omr_residuals]

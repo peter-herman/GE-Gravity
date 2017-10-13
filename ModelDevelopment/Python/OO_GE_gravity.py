@@ -15,8 +15,21 @@ countries = Construct("G:/data/Gravity Resources/Gravity modeling in Python/GE g
 
 model = Model(countries=countries, normalized_name="ZZZ", equation=system_for_multilateral_resistance)
 
-result = model.solve()
-
-print(result)
+print(model.solve(x0=[0] * 82))
 print(model.time_elapsed)
 print(model.is_valid)
+
+print(model.solve(x0=[1] * 82))
+print(model.time_elapsed)
+print(model.is_valid)
+
+print(model.solve(x0=[2] * 82))
+print(model.time_elapsed)
+print(model.is_valid)
+
+print(model.solve(x0=[3] * 82))
+print(model.time_elapsed)
+print(model.is_valid)
+
+result = model.solve()
+sum(value * value for value in system_for_multilateral_resistance(countries, [x.inward for x in result] + [x.outward for x in result]))

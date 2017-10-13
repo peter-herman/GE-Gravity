@@ -107,7 +107,7 @@ class Model(object):
         if not isinstance(x0, np.ndarray):
             x0 = np.asarray(x0)
 
-        if len(x0) != len(self.__countries):
+        if len(x0) != 2 * len(self.__countries):
             raise ValueError("Expected sequence of {0} values, but received {1} values.".format(len(self.__countries), len(x0)))
 
         start = time()
@@ -126,15 +126,18 @@ class Model(object):
         :return: A function suitable for use in the solve() function.
         """
 
-        bind0 = partial(equation, self.__countries)
+        bound_function = partial(equation, self.__countries)
+        normalized_index = self.normalized_index
 
         def __wrapped_function(x: List[float]) -> List[float]:
-            # x[self.normalized_index] = 1.0
-            return bind0(x)
+            x[normalized_index] = 1.0
+            result = bound_function(x)
+            result[normalized_index] = 0.0
+            return result
 
         return __wrapped_function
 
-    def __normalize_baseline(self, results: Sequence[float], inward: bool = True) -> Sequence[ModelResult]:
+    def __normalize_baseline(self, results: Sequence[float]) -> Sequence[ModelResult]:
         """
         This function takes the raw results from the optimization routine and constructs a list of tuples to return to the user.
         :param results: The results of the optimization.
@@ -146,11 +149,9 @@ class Model(object):
 
         count = len(self.__countries)
 
-        base = results[self.normalized_index + (0 if inward else count)]
+        inward_resistances = (x for x in results[:count])
 
-        inward_resistances = (x / base for x in results[:count])
-
-        outward_resistances = (x / base for x in results[count:])
+        outward_resistances = (x for x in results[count:])
 
         names = (x.name for x in self.__countries)
 
