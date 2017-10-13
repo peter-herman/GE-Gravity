@@ -20,21 +20,62 @@ class Model(object):
     """
 
     __slots__ = [
-        "equation",
-        "records",
-        "normalized_name",
-        "normalized_index",
-        "last_solution_time",
-        "last_solution_success"
+        "__equation",
+        "__countries",
+        "__normalized_name",
+        "__time_elapsed",
+        "__is_valid"
     ]
 
-    def __init__(self, records: Iterable[Country], normalized_name: str, equation: Callable[[List[Country], List[float]], Iterable[float]]) -> None:
-        self.records = list(records)
-        self.normalized_name = normalized_name
-        self.normalized_index = [x.name for x in records].index(normalized_name)
-        self.equation = partial(equation, records)
-        self.last_solution_time = 0
-        self.last_solution_success = False
+    @property
+    def normalized_name(self) -> str:
+        """
+        The name of the country to which the results are normalized.
+        """
+        return self.__normalized_name
+
+    @property
+    def normalized_index(self) -> int:
+        """
+        The index of the country to which the results are normalized.
+        """
+        return [x.name for x in self.__countries].index(self.__normalized_name)
+
+    @property
+    def countries(self) -> Iterable[Country]:
+        """
+        The collection of countries in the model.
+        """
+        return (x for x in self.__countries)
+
+    @property
+    def time_elapsed(self):
+        """
+        The time elapsed during the previous solution.
+        """
+        return self.__time_elapsed
+
+    @property
+    def is_valid(self):
+        """
+        True if the previous solution was successful; otherwise false.
+        """
+        return self.__is_valid
+
+    def __init__(self, countries: Iterable[Country], normalized_name: str,
+                 equation: Callable[[Iterable[Country], List[float]], Iterable[float]]) -> None:
+        self.__countries = list(countries)
+
+        if len(self.__countries) == 0:
+            raise ValueError("The country collection is empty.")
+
+        if [x.name for x in countries].index(normalized_name) < 0:
+            raise ValueError("{0} not found in country collection".format(normalized_name))
+
+        self.__normalized_name = normalized_name
+        self.__equation = partial(equation, self.__countries)
+        self.__time_elapsed = 0
+        self.__is_valid = False
 
     def solve(self, x0: List[float] = None, method: str = "hybr", tol: float = 1e-8, xtol: float = 1e-8, maxfev: int = 1400) -> Iterable[Tuple[str, float, float]]:
         """
@@ -48,18 +89,17 @@ class Model(object):
         """
 
         if x0 is None:
-            x0 = np.ones(2 * len(self.records))
+            x0 = np.ones(2 * len(self.__countries))
 
         if not isinstance(x0, np.ndarray):
             x0 = np.asarray(x0)
 
         start = time()
 
-        results = root(fun=self.equation, x0=x0, method=method, tol=tol, options={"xtol": xtol, "maxfev": maxfev})
+        results = root(fun=self.__equation, x0=x0, method=method, tol=tol, options={"xtol": xtol, "maxfev": maxfev})
 
-        self.last_solution_time = time() - start
-
-        self.last_solution_success = results.success
+        self.__time_elapsed = time() - start
+        self.__is_valid = results.success
 
         return self.__normalize_baseline(results.x)
 
@@ -74,21 +114,27 @@ class Model(object):
         if not isinstance(results, list):
             results = list(results)
 
-        count = len(results) // 2
+        count = len(self.__countries)
 
-        inward_resistances = results[:count]
+        base = results[self.normalized_index if inward else self.normalized_index + count]
 
-        outward_resistances = 1000 * results[count:]
+        inward_resistances = (x / base for x in results[:count])
 
-        if inward:
-            inward_resistances[self.normalized_index] = 1
-        else:
-            outward_resistances[self.normalized_index] = 1
+        outward_resistances = (x / base for x in results[count:])
 
-        return zip([x.name for x in self.records], inward_resistances, outward_resistances)
+        names = (x.name for x in self.__countries)
 
-    def __str__(self):
+        return list(zip(names, inward_resistances, outward_resistances))
+
+    def __str__(self) -> str:
+        """
+        Returns a string representation of the object.
+        """
         return self.__repr__()
 
-    def __repr__(self):
-        pass
+    def __repr__(self) -> str:
+        """
+        Returns a string representation of the object.
+        """
+        return "(normalized_name:{0}, success: {1}, elapsed: {2})".format(self.__normalized_name, self.__is_valid,
+                                                                          self.__time_elapsed)

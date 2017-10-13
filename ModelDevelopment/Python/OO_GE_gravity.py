@@ -40,9 +40,9 @@ def func_base_mr1(records: List[Country], x: List[float]) -> Iterable[float]:
 
 countries = Construct("G:/data/Gravity Resources/Gravity modeling in Python/GE gravity 10.3.2017/ge_ppml_data.dta")
 
-model = Model(records=countries, normalized_name="ZZZ", equation=func_base_mr1)
+model = Model(countries=countries, normalized_name="ZZZ", equation=func_base_mr1)
 
 result = model.solve()
 
-print(model.last_solution_success)
-print(model.last_solution_time)
+print(model.time_elapsed)
+print(model.is_valid)
