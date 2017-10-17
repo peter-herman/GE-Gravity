@@ -89,8 +89,7 @@ class Model(object):
         self.__time_elapsed = 0
         self.__is_valid = False
 
-    def solve(self, x0: Sequence[float] = None, method: str = "hybr", tol: float = 1e-8, xtol: float = 1e-8,
-              maxfev: int = 1400) -> Sequence[ModelResult]:
+    def solve(self, x0: Sequence[float] = None, method: str = "hybr", tol: float = 1e-8, xtol: float = 1e-8, maxfev: int = 1400) -> Sequence[ModelResult]:
         """
         This function wraps the optimization and result construction tasks.
         :param x0:
