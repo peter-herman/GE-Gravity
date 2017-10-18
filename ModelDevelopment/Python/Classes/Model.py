@@ -82,7 +82,7 @@ class Model(object):
             raise ValueError("The country collection is empty.")
 
         if [x.name for x in countries].index(normalized_name) < 0:
-            raise ValueError("{0} not found in country collection".format(normalized_name))
+            raise ValueError(f"{normalized_name} not found in country collection")
 
         self.__normalized_name = normalized_name
         self.__equation = self.__wrap_equation(equation)
@@ -107,7 +107,7 @@ class Model(object):
             x0 = np.asarray(x0)
 
         if len(x0) != 2 * len(self.__countries):
-            raise ValueError("Expected sequence of {0} values, but received {1} values.".format(len(self.__countries), len(x0)))
+            raise ValueError(f"Expected sequence of {2 * len(self.__countries)} values, but received {len(x0)} values.")
 
         start = time()
 
@@ -199,4 +199,4 @@ class Model(object):
         """
         Returns a string representation of the object.
         """
-        return "(normalized_name:{0}, success: {1}, elapsed: {2})".format(self.__normalized_name, self.__is_valid, self.__time_elapsed)
+        return f"(normalized_name:{self.__normalized_name}, success: {self.__is_valid}, elapsed: {self.__time_elapsed})"
