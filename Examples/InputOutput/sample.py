@@ -1,5 +1,11 @@
-from Examples.InputOutput.World import *
+from Examples.InputOutput.World import read_world
 
-file = "\\users\\austin.drenski\\desktop\\gravity_programming_sample_data.txt"
+filePath = "\\users\\austin.drenski\\desktop\\gravity_programming_sample_data.txt"
 
-read_world(file)
+world = read_world(filePath)
+
+world.countries
+
+world.find_country("USA")
+world.find_gdp("2014")
+world.find_gdp("2015")

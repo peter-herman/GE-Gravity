@@ -1,0 +1,69 @@
+from typing import Callable, List
+__all__ = ["join"]
+__author__ = "Austin Drenski"
+__project__ = "Joining"
+__created__ = "9-25-2017"
+__altered__ = "9-25-2017"
+__version__ = "1.0.0"
+
+
+def join(left: List, right: List, left_select: Callable, right_select: Callable):
+    """
+    Joins two lists
+    :param left: The left collection.
+    :param right: The right collection.
+    :param left_select: A lambda that selects a key from an element of the left collection.
+    :param right_select: A lambda that selects a key from an element of the right collection.
+    :return: A collection of tuples containing the left and right elements.
+    """
+    dictionary = {}
+
+    for item in left:
+        dictionary[left_select(item)] = (item, None)
+
+    for item in right:
+        key = right_select(item)
+        left_value = dictionary.get(key, (None, None))
+        if left_value[0] is None:
+            continue
+        dictionary[key] = (left_value[0], item)
+
+    return dictionary
+
+
+class KeyValuePair(object):
+    """
+    Basic object to hold a key and a value.
+    """
+
+    __slots__ = ["key", "value"]
+
+    def __init__(self, key, value):
+        """
+        Initializes a KeyValuePair.
+        :param key: The key that we'll match with later.
+        :param value: The value that we're storing for after the match.
+        """
+        self.key = key
+        self.value = value
+
+    def __str__(self):
+        return "[{0}] = {1}".format(self.key, self.value)
+
+    def __repr__(self):
+        return self.__str__()
+
+
+gdp = [KeyValuePair(value, value < 5) for value in range(10)]
+pop = [KeyValuePair(value, value > 5) for value in reversed(range(11))]
+
+select1 = lambda x: x.key
+
+
+def select2(x):
+    return x.key
+
+
+gdp_pop = join(gdp, pop, select1, select2)
+
+d = join(range(0, 10), range(1, 11), lambda x: x, lambda x: x)
