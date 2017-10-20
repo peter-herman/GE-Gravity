@@ -1,5 +1,6 @@
 import csv
-from typing import List
+from itertools import groupby
+from typing import List, Tuple
 
 from Examples.InputOutput.Country import *
 
@@ -7,8 +8,8 @@ __all__ = ["World", "read_world"]
 __author__ = "Austin Drenski"
 __project__ = "InputOutput"
 __created__ = "9-6-2017"
-__altered__ = "9-6-2017"
-__version__ = "1.0.0"
+__altered__ = "9-11-2017"
+__version__ = "1.1.0"
 
 
 class World(object):
@@ -20,62 +21,71 @@ class World(object):
 
     __module__ = "InputOutput"
 
-    __slots__ = ["_gdp", "_year", "_countries"]
+    __slots__ = ["_annualGDP", "_countries"]
 
-    def __init__(self, gdp: float, year: str, countries: List[Country]) -> None:
+    @property
+    def annualGDP(self) -> List[Tuple[str, float]]:
+        return self._annualGDP
+
+    @property
+    def countries(self) -> List[Country]:
+        return self._countries
+
+    def __init__(self, annualGDP: List[Tuple[str, float]], countries: List[Country]) -> None:
         """
-        Constructs an experiment with a specific parametrization.
-        :param gdp: The alpha parameter.
-        :param year: The beta parameter.
+        Constructs a world of countries.
+        :param annualGDP: A collection of tuples containing a year and the global GDP in that year.
+        :param countries: The countries in this world.
         """
 
-        if gdp is None:
-            raise TypeError
-
-        if year is None:
+        if annualGDP is None:
             raise TypeError
 
         if countries is None:
             raise TypeError
 
-        self._gdp = gdp
-        self._year = year
+        self._annualGDP = annualGDP
         self._countries = countries
 
-    def get_countries(self) -> List[Country]:
-        return self._countries
-
-    def find_country(self, country: str) -> Country:
+    def find_country(self, name: str) -> Country:
         """
-        Evaluates the derivative for a given input.
-        :param country: The point at which the derivative is evaluated.
-        :return: The value of the derivative at the given input.
+        Finds the country with the given name.
+        :param name: The country to locate.
+        :return: The country whose name was given.
         """
 
-        if country is None:
+        if name is None:
             raise TypeError
 
-        return next(
-            filter(
-                lambda x: x.get_name == country,
-                self._countries),
-            None)
+        return next(filter(lambda x: x.name == name, self._countries), None)
+
+    def find_gdp(self, year: str) -> float:
+        """
+        Finds the country with the given name.
+        :param year: The year for which to locate GDP.
+        :return: The global GDP of the given year.
+        """
+
+        if year is None:
+            raise TypeError
+
+        return sum([country.gdp for country in filter(lambda x: x.year == year, self._countries)])
 
 
 def read_world(filePath: str) -> World:
     """
-    Evaluates the experiment for a given input.
-    :param filePath: The point at which the derivative is evaluated.
-    :return: The value of the experiment at the given input.
+    Reads countries from a file and returns a world.
+    :param filePath: The file containing countries.
+    :return: A world constructed from the countries in the file.
     """
 
     if filePath is None:
         raise TypeError
 
-    with open(filePath) as reader:
+    with open(filePath, encoding="utf-8-sig") as reader:
         lines = csv.DictReader(reader)
         countries = [Country(line["name"], float(line["gdp"]), line["year"]) for line in lines]
 
-    gdp = sum([c._gdp for c in countries])
+    annualGDP = [(key, sum([country.gdp for country in group])) for key, group in groupby(countries, lambda x: x.year)]
 
-    return World(gdp, "2015", countries)
+    return World(annualGDP, countries)

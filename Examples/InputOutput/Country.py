@@ -2,8 +2,8 @@ __all__ = ["Country"]
 __author__ = "Austin Drenski"
 __project__ = "InputOutput"
 __created__ = "9-6-2017"
-__altered__ = "9-6-2017"
-__version__ = "1.0.0"
+__altered__ = "9-11-2017"
+__version__ = "1.1.0"
 
 
 class Country(object):
@@ -16,6 +16,33 @@ class Country(object):
     __module__ = "InputOutput"
 
     __slots__ = ["_name", "_gdp", "_year"]
+
+    @property
+    def name(self) -> str:
+        """
+        Gets the name of the observation.
+        :return: The name of the observation.
+        """
+
+        return self._name
+
+    @property
+    def gdp(self) -> float:
+        """
+        Gets the GDP of the observation.
+        :return: The GDP of the observation.
+        """
+
+        return self._gdp
+
+    @property
+    def year(self) -> str:
+        """
+        Gets the year of the observation.
+        :return: The year of the observation.
+        """
+
+        return self._year
 
     def __init__(self, name: str, gdp: float, year: str) -> None:
         """
@@ -38,24 +65,8 @@ class Country(object):
         self._gdp = gdp
         self._year = year
 
-    @property
-    def get_year(self) -> str:
-        """
-        Gets the year of the observation.
-        :return: The year of the observation.
-        """
+    def __str__(self) -> str:
+        return (self._name, self._year, self._gdp).__str__()
 
-        return self._year
-
-    @property
-    def get_name(self) -> str:
-        """
-        Gets the name of the observation.
-        :return: The name of the observation.
-        """
-
-        return self._name
-
-    def set_year(self, value: str) -> None:
-
-        self._year = value
+    def __repr__(self) -> str:
+        return self.__str__()
