@@ -10,6 +10,7 @@ class single_flow_data_request(object):
     def __init__(self,
                  importers: List,
                  exporters: List,
+                 years: List,
                  source: str = 'comtrade',
                  frequency: str = 'annual',
                  nomenclature: str = "HS6",
@@ -19,6 +20,7 @@ class single_flow_data_request(object):
                  ):
         self.importers = importers
         self.exporters = exporters
+        self.years = years
         self.source = source
         self.frequency = frequency
         self.nomenclature = nomenclature

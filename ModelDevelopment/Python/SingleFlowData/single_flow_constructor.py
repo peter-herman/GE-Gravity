@@ -1,6 +1,9 @@
 import pandas as pd
 from get_data_query_builder import *
 
+
+
+def single_flow_constructor(data_request):
 imports_request_url = get_data_query_builder(years = (2013,2014,2015),
                                             reporters = ("USA","CAN","MEX"),
                                             partners = ("USA", "CAN", "MEX"),
