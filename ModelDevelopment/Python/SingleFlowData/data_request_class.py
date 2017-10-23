@@ -7,10 +7,12 @@ __version__ = "1.0.0"
 
 from typing import List
 
+
 class single_flow_data_request(object):
     """
     Object for storing the specifications for a USITC data api request
     """
+
     def __init__(self,
                  importers: List,
                  exporters: List,
@@ -43,4 +45,3 @@ class single_flow_data_request(object):
         self.file_format = file_format
         self.iso3 = iso3
         self.aggregation = aggregation
-

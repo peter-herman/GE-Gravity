@@ -3,15 +3,15 @@ from typing import List
 
 
 def get_data_query_constructor(years: List = "",
-                           reporters: List = "",
-                           partners: List = "",
-                           source: str = 'comtrade',
-                           flow_type: str = "imports",
-                           frequency: str = "annual",
-                           nomenclature: str = "HS6",
-                           file_format: str = 'csv',
-                           iso3: str = 'True',
-                           aggregation: str = ""):
+                               reporters: List = "",
+                               partners: List = "",
+                               source: str = 'comtrade',
+                               flow_type: str = "imports",
+                               frequency: str = "annual",
+                               nomenclature: str = "HS6",
+                               file_format: str = 'csv',
+                               iso3: str = 'True',
+                               aggregation: str = ""):
     """
     Function that constructs a request url for the USITC data API from inputted specifications.
     :param years: A list of years.
