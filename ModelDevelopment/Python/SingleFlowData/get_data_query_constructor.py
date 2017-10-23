@@ -1,8 +1,8 @@
-__all__ = ['get_data_query_builder']
+__all__ = ['get_data_query_constructor']
 from typing import List
 
 
-def get_data_query_builder(years: List = "",
+def get_data_query_constructor(years: List = "",
                            reporters: List = "",
                            partners: List = "",
                            source: str = 'comtrade',

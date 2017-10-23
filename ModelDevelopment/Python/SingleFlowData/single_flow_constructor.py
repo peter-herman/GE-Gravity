@@ -8,7 +8,7 @@ __version__ = "1.0.0"
 
 import pandas as pd
 
-from ModelDevelopment.Python.SingleFlowData.get_data_query_builder import *
+from ModelDevelopment.Python.SingleFlowData.get_data_query_constructor import get_data_query_constructor
 
 
 def single_flow_constructor(data_request: object):
@@ -20,7 +20,7 @@ def single_flow_constructor(data_request: object):
     :return: a pandas data frame
     """
 
-    imports_request_url = get_data_query_builder(years = data_request.years,
+    imports_request_url = get_data_query_constructor(years = data_request.years,
                                             reporters = data_request.importers,
                                             partners = data_request.exporters,
                                             source = data_request.source,
@@ -28,7 +28,7 @@ def single_flow_constructor(data_request: object):
                                             file_format = data_request.file_format,
                                             flow_type = 'imports')
 
-    exports_request_url = get_data_query_builder(years = data_request.years,
+    exports_request_url = get_data_query_constructor(years = data_request.years,
                                             reporters = data_request.exporters,
                                             partners = data_request.importers,
                                             source = data_request.source,
