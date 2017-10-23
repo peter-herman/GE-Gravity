@@ -12,6 +12,13 @@ from ModelDevelopment.Python.SingleFlowData.get_data_query_builder import *
 
 
 def single_flow_constructor(data_request: object):
+    """
+    A function that accepts a request for data and returns a pandas data fram given the parameters of the request.  The
+    returned data provides reported imports, exports, and a single flow measure equal to the average of reported imports and exports.
+    In the case of missing imports or exports, the single flow value equal to whichever flow is not missing.
+    :param data_request: A ''single_flow_data_request'' object that specifies the parameters of the data to pull.
+    :return: a pandas data frame
+    """
 
     imports_request_url = get_data_query_builder(years = data_request.years,
                                             reporters = data_request.importers,
@@ -47,9 +54,13 @@ def single_flow_constructor(data_request: object):
                                'tradeValue': 'trade_value_exports'}, inplace = True)
 
     merged_data = imports_data.merge(exports_data, how = 'outer', on = ('importer', 'exporter', 'year', 'productCode'))
-    merged_data['trade_value_exports'].fillna(merged_data['trade_value_imports'], inplace = True)
-    merged_data['trade_value_imports'].fillna(merged_data['trade_value_exports'], inplace = True)
-    merged_data['single_flow'] = (merged_data['trade_value_exports'] + merged_data['trade_value_imports'])/2
+    merged_data['trade_value_exports_temp'] = merged_data['trade_value_exports']
+    merged_data['trade_value_imports_temp'] = merged_data['trade_value_imports']
+    merged_data['trade_value_exports_temp'].fillna(merged_data['trade_value_imports'], inplace = True)
+    merged_data['trade_value_imports_temp'].fillna(merged_data['trade_value_exports'], inplace = True)
+    merged_data['single_flow'] = (merged_data['trade_value_exports_temp'] + merged_data['trade_value_imports_temp'])/2
+    del merged_data['trade_value_exports_temp']
+    del merged_data['trade_value_imports_temp']
 
     return merged_data
 
