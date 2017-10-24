@@ -31,8 +31,14 @@ def get_data_query_constructor(years: List = "",
 
     nomenclature_str = 'country?nomenclature=' + nomenclature
     year_str = '&years=' + ",".join(map(str, years))
-    reporters_str = '&reporters=' + ",".join(reporters)
-    partners_str = '&partners=' + ",".join(partners)
+    if (reporters == "all") or (reporters == "ALL") or (reporters == "All") or (reporters == ""):
+        reporters_str = ""
+    else:
+        reporters_str = '&reporters=' + ",".join(reporters)
+    if (partners == "all") or (partners == "ALL") or (partners == "All") or (partners == ""):
+        partners_str=""
+    else:
+        partners_str = '&partners=' + ",".join(partners)
 
     url_out = server_address + \
               source + '/' + \
@@ -47,3 +53,5 @@ def get_data_query_constructor(years: List = "",
               '&aggregation=' + aggregation
 
     return url_out
+
+
