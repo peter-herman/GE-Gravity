@@ -15,8 +15,8 @@ def get_data_query_constructor(years: List = "",
     """
     Function that constructs a request url for the USITC data API from inputted specifications.
     :param years: A list of years.
-    :param reporters: A list of reporter iso3's
-    :param partners: A list of partner iso3's
+    :param reporters: A list of reporter iso3's (or "all" for all available countries)
+    :param partners: A list of partner iso3's (or "all" for all available countries)
     :param source: database to draw from. i.e. 'comtrade' or 'dataweb'
     :param flow_type: 'imports' or 'exports'
     :param frequency: 'annual', [fill in other options]
