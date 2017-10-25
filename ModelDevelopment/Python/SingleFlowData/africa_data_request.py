@@ -21,4 +21,4 @@ request_africa = single_flow_data_request(years=[2013, 2014, 2015],
 
 africa_data = single_flow_constructor(request_africa)
 
-africa_data.to_csv("\\\\hq-fs-1.cloudnet.usitc.gov\\FS Econ only\\data\\Gravity Resources\\Data\\Africa Data\\africa_comtrade_data_single_flow.csv")
+africa_data.to_csv("\\\\hq-fs-1.cloudnet.usitc.gov\\FS Econ only\\data\\Gravity Resources\\Data\\Africa Data\\africa_comtrade_data_single_flow.csv", index = False)
