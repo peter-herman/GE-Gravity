@@ -49,11 +49,11 @@ def get_data_query_constructor(years: List,
 
     nomenclature_str = 'country?nomenclature=' + nomenclature
     year_str = '&years=' + ",".join(map(str, years))
-    if (reporters[0] == "all") or (reporters[0] == "ALL") or (reporters[0] == "All") or (reporters == ""):
+    if (reporters[0] == "all") or (reporters[0] == "ALL") or (reporters[0] == "All") or (reporters[0] == ""):
         reporters_str = ""
     else:
         reporters_str = '&reporters=' + ",".join(reporters)
-    if (partners == "all") or (partners == "ALL") or (partners == "All") or (partners == ""):
+    if (partners[0] == "all") or (partners[0] == "ALL") or (partners[0] == "All") or (partners[0] == ""):
         partners_str=""
     else:
         partners_str = '&partners=' + ",".join(partners)

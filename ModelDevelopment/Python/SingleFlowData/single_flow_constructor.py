@@ -5,6 +5,8 @@ __created__ = "10-23-2017"
 __altered__ = "10-23-2017"
 __version__ = "1.0.0"
 
+import time
+
 import pandas as pd
 
 from ModelDevelopment.Python.SingleFlowData.get_data_query_constructor import get_data_query_constructor
@@ -18,7 +20,7 @@ def single_flow_constructor(data_request: object):
     :param data_request: A ''single_flow_data_request'' object that specifies the parameters of the data to pull.
     :return: a pandas data frame
     """
-
+    proc_time = time.time()
     imports_request_url = get_data_query_constructor(years=data_request.years,
                                                      reporters=data_request.importers,
                                                      partners=data_request.exporters,
@@ -35,15 +37,26 @@ def single_flow_constructor(data_request: object):
                                                      file_format=data_request.file_format,
                                                      flow_type='exports')
     print(exports_request_url)
+    proc_time = time.time()
+    print("Imports request sent to API:  " + time.strftime('%I:%M:%p %Z on %b %d, %Y'))
     imports_data = pd.read_json(imports_request_url)
+    print("Imports request returned:  " + time.strftime('%I:%M:%p  on %b %d, %Y') + ".   Total time elapsed: " + str(
+        (time.time() - proc_time) / 60) + " minutes")
+    print("Exports request sent to API:  " + time.strftime('%I:%M:%p %Z on %b %d, %Y'))
     exports_data = pd.read_json(exports_request_url)
+    print("Exports request returned:  " + time.strftime('%I:%M:%p  on %b %d, %Y') + ".   Total time elapsed: " + str(
+        (time.time() - proc_time) / 60) + " minutes")
+    print("Merging data....")
+
+    unneeded_columns = ['tradeFlow', 'aggregation', 'source']
+    imports_data.drop(unneeded_columns, inplace=True, axis=1)
+    exports_data.drop(unneeded_columns, inplace=True, axis=1)
 
     imports_data.rename(columns={'reporterIso3': 'importer', 'partnerIso3': 'exporter',
-                                 'costBasis': 'costBasis_imports', 'tradeFlow': 'trade_flow_imports',
+                                 'costBasis': 'costBasis_imports',
                                  'tradeValue': 'trade_value_imports'}, inplace=True)
     exports_data.rename(columns={'reporterIso3': 'exporter', 'partnerIso3': 'importer',
                                  'costBasis': 'costBasis_exports',
-                                 'tradeFlow': 'trade_flow_exports',
                                  'tradeValue': 'trade_value_exports'}, inplace=True)
 
     merged_data = imports_data.merge(exports_data, how='outer', on=('importer', 'exporter', 'year', 'productCode'))
@@ -54,5 +67,7 @@ def single_flow_constructor(data_request: object):
     merged_data['single_flow'] = (merged_data['trade_value_exports_temp'] + merged_data['trade_value_imports_temp']) / 2
     del merged_data['trade_value_exports_temp']
     del merged_data['trade_value_imports_temp']
+    print("Data merged:  " + time.strftime('%I:%M:%p  on %b %d, %Y') + ".   Total time elapsed: " + str(
+        (time.time() - proc_time) / 60) + " minutes")
 
     return merged_data
