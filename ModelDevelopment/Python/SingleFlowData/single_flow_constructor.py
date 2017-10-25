@@ -26,7 +26,7 @@ def single_flow_constructor(data_request: object):
                                                      aggregation=data_request.aggregation,
                                                      file_format=data_request.file_format,
                                                      flow_type='imports')
-
+    print(imports_request_url)
     exports_request_url = get_data_query_constructor(years=data_request.years,
                                                      reporters=data_request.exporters,
                                                      partners=data_request.importers,
@@ -34,7 +34,7 @@ def single_flow_constructor(data_request: object):
                                                      aggregation=data_request.aggregation,
                                                      file_format=data_request.file_format,
                                                      flow_type='exports')
-
+    print(exports_request_url)
     imports_data = pd.read_json(imports_request_url)
     exports_data = pd.read_json(exports_request_url)
 
