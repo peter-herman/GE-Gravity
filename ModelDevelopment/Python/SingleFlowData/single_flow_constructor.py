@@ -2,7 +2,7 @@ __all__ = ['single_flow_constructor']
 __author__ = "Peter Herman"
 __project__ = "GE-Gravity.ModelDevelopment.Python.SingleFlowData"
 __created__ = "10-23-2017"
-__altered__ = "10-23-2017"
+__altered__ = "10-26-2017"
 __version__ = "1.0.0"
 
 import time
@@ -24,18 +24,44 @@ def single_flow_constructor(data_request: object):
     imports_request_url = get_data_query_constructor(years=data_request.years,
                                                      reporters=data_request.importers,
                                                      partners=data_request.exporters,
-                                                     source=data_request.source,
+                                                     data_source=data_request.source,
                                                      aggregation=data_request.aggregation,
                                                      file_format=data_request.file_format,
-                                                     flow_type='imports')
+                                                     flow_type='imports',
+                                                     iso3='True',
+                                                     reporter_iso3='True',
+                                                     partner_iso3='True',
+                                                     names='False',
+                                                     reporter_names='False',
+                                                     partner_names='False',
+                                                     gtap_regions='False',
+                                                     quantity='False',
+                                                     descriptions='False',
+                                                     cost_basis='True',
+                                                     trade_flow='False',
+                                                     source='False'
+                                                     )
     print(imports_request_url)
     exports_request_url = get_data_query_constructor(years=data_request.years,
                                                      reporters=data_request.exporters,
                                                      partners=data_request.importers,
-                                                     source=data_request.source,
+                                                     data_source=data_request.source,
                                                      aggregation=data_request.aggregation,
                                                      file_format=data_request.file_format,
-                                                     flow_type='exports')
+                                                     flow_type='exports',
+                                                     iso3='True',
+                                                     reporter_iso3='True',
+                                                     partner_iso3='True',
+                                                     names='False',
+                                                     reporter_names='False',
+                                                     partner_names='False',
+                                                     gtap_regions='False',
+                                                     quantity='False',
+                                                     descriptions='False',
+                                                     cost_basis='True',
+                                                     trade_flow='False',
+                                                     source='False'
+                                                     )
     print(exports_request_url)
     proc_time = time.time()
     print("Imports request sent to API:  " + time.strftime('%I:%M:%p %Z on %b %d, %Y'))
@@ -48,7 +74,7 @@ def single_flow_constructor(data_request: object):
         (time.time() - proc_time) / 60) + " minutes")
     print("Merging data....")
 
-    unneeded_columns = ['tradeFlow', 'aggregation', 'source']
+    unneeded_columns = ['aggregation']
     imports_data.drop(unneeded_columns, inplace=True, axis=1)
     exports_data.drop(unneeded_columns, inplace=True, axis=1)
 
