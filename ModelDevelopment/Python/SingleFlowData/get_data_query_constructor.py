@@ -71,30 +71,32 @@ def get_data_query_constructor(years: List,
         raise TypeError("file_format is not a string")
     if not isinstance(aggregation, str):
         raise TypeError("aggregation is not a string")
-    if not isinstance(iso3, str):
-        raise TypeError("iso3 is not a string")
-    if not isinstance(reporter_iso3, str):
-        raise TypeError("reporter_iso3 is not a string")
-    if not isinstance(partner_iso3, str):
-        raise TypeError("partner_iso3 is not a string")
-    if not isinstance(names, str):
-        raise TypeError("names is not a string")
-    if not isinstance(reporter_names, str):
-        raise TypeError("reporter_names is not a string")
-    if not isinstance(partner_names, str):
-        raise TypeError("partner_names is not a string")
-    if not isinstance(gtap_regions, str):
-        raise TypeError("gtap_regions is not a string")
-    if not isinstance(quantity, str):
-        raise TypeError("quantity is not a string")
-    if not isinstance(descriptions, str):
-        raise TypeError("descriptions is not a string")
-    if not isinstance(cost_basis, str):
-        raise TypeError("cost_basis is not a string")
-    if not isinstance(trade_flow, str):
-        raise TypeError("trade_flow is not a string")
-    if not isinstance(source, str):
-        raise TypeError("source is not a string")
+
+    if not (iso3 == "True" or iso3 == "False"):
+        raise TypeError("iso3 must take the string value 'True' or 'False'")
+    if not (reporter_iso3 == "True" or reporter_iso3 == "False"):
+        raise TypeError("reporter_iso3 must take the string value 'True' or 'False'")
+    if not (partner_iso3 == "True" or partner_iso3 == "False"):
+        raise TypeError("partner_iso3 must take the string value 'True' or 'False'")
+    if not (names == "True" or names == "False"):
+        raise TypeError("names must take the string value 'True' or 'False'")
+    if not (reporter_names == 'True' or reporter_names == 'False'):
+        raise TypeError("reporter_names must take the string value 'True' or 'False'")
+    if not (partner_names == "True" or partner_names == "False"):
+        raise TypeError("partner_names must take the string value 'True' or 'False'")
+    if not (gtap_regions == "True" or gtap_regions == "False"):
+        raise TypeError("gtap_regions must take the string value 'True' or 'False'")
+    if not (quantity == "True" or quantity == "False"):
+        raise TypeError("quantity must take the string value 'True' or 'False'")
+    if not (descriptions == "True" or descriptions == "False"):
+        raise TypeError("descriptions must take the string value 'True' or 'False'")
+    if not (cost_basis == "True" or cost_basis == "False"):
+        raise TypeError("cost_basis must take the string value 'True' or 'False'")
+    if not (trade_flow == "True" or trade_flow == "False"):
+        raise TypeError("trade_flow must take the string value 'True' or 'False'")
+    if not (source == "True" or source == "False"):
+        raise TypeError("source must take the string value 'True' or 'False'")
+
 
     server_address = 'http://itcmmodel:8085/api/'
 
