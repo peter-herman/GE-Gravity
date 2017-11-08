@@ -2,8 +2,8 @@
 import numpy as np
 import pandas as pd
 
-trade_data = pd.read_csv("\\\\hq-fs-1.cloudnet.usitc.gov\\FS Econ only\\data\\Gravity Resources\\Data\\Africa Data\\africa_comtrade_data_single_flow_hs6agg.csv")
-digest_data = pd.read_csv("\\\\hq-fs-1.cloudnet.usitc.gov\\FS Econ only\\data\\Gravity Resources\\Data\\Africa Data\\concordance_digest_hs6 (one to many).csv")
+trade_data = pd.read_csv("G:\\data\\Gravity Resources\\Data\\Africa Data\\africa_comtrade_data_single_flow_hs6agg.csv")
+digest_data = pd.read_csv("G:\\data\\Gravity Resources\\Data\\Africa Data\\concordance_digest_hs6 (one to many).csv")
 digest_data.drop(['ID'], axis = 1, inplace = True)
 
 trade_data.columns
@@ -25,8 +25,8 @@ merged_data['weighted_flows'] = merged_data['single_flow']*merged_data['weight']
 merged_data.drop(['trade_value_imports', 'trade_value_exports','single_flow', 'hs6', 'productcode', 'weight', 'year'], axis=1, inplace=True)
 collapsed_data = merged_data.groupby(['importer','exporter','digest']).sum().reset_index()
 collapsed_data['weighted_flows'] = collapsed_data['weighted_flows']/3
-countries_to_drop =
-collapsed_data[collapsed_data['exporter'].isin(countries_to_drop)].index, inplace = True
+# countries_to_drop =
+# collapsed_data[collapsed_data['exporter'].isin(countries_to_drop)].index, inplace = True
 
 collapsed_data.to_csv("\\\\hq-fs-1.cloudnet.usitc.gov\\FS Econ only\\data\\Gravity Resources\\Data\\Africa Data\\COMTRADE_digest_aggregation_singleflow_2013to2015average.csv", index=False)
 
